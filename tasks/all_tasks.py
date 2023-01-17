@@ -6,7 +6,7 @@ import pybullet
 import time
 import scipy.interpolate
 
-from tfbo.models.vae_models import Decoder
+from models.vae_models import Decoder
 from examples.config_file import config
 from mpc_controller import com_velocity_estimator
 from mpc_controller import gait_generator as gait_generator_lib
@@ -21,9 +21,9 @@ from perlin_noise import PerlinNoise
 import pybullet_data
 
 from pybullet_utils import bullet_client
-from motion_imitation.robots import a1, b1
-from motion_imitation.robots import robot_config
-from motion_imitation.robots.gamepad import gamepad_reader
+from robots import a1, b1
+from robots import robot_config
+from robots.gamepad import gamepad_reader
 
 class unitree_cost():
     def __init__(self, seed):
@@ -111,7 +111,7 @@ class unitree_cost():
                                            kind="previous",
                                            fill_value="extrapolate",
                                            axis=0)(t)
-        return speed[0:3], speed[3], True
+        return speed[0:3], speed[3], False
 
     def _setup_controller(self, mpc_weights):
         desired_speed = (0, 0)
@@ -325,7 +325,6 @@ class unitree_cost():
           if (self.ig.motion == 'stand') and (z_com < 0.17 or np.isnan(z_com) or z_com > 0.36):
              FALL = True
              break
-
         if self.ig.use_gamepad:
            gamepad.stop()
         o = current_time-start_time

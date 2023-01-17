@@ -5,9 +5,9 @@ sys.path.insert(0, os.path.join(sys.path[0], '..'))
 from collections import OrderedDict
 
 import numpy as np
-from tfbo.utils.import_modules import import_attr
-from tfbo.models.vae_models import Autoencoder, VariationalAutoencoder, CondVariationalAutoencoder
-from tfbo.utils.load_save import save_dictionary, load_dictionary
+from utils.import_modules import import_attr
+from models.vae_models import Autoencoder, VariationalAutoencoder, CondVariationalAutoencoder
+from utils.load_save import save_dictionary, load_dictionary
 from torch.optim.lr_scheduler import MultiStepLR
 from examples.config_file import config
 

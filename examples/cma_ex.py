@@ -4,9 +4,9 @@ import argparse
 import sys, os
 sys.path.insert(0, os.path.join(sys.path[0], '..'))
 
-from tfbo.utils.import_modules import import_attr
+from utils.import_modules import import_attr
 from examples.config_file import config
-from tfbo.utils.load_save import save_dictionary
+from utils.load_save import save_dictionary
 from collections import OrderedDict
 
 
@@ -38,10 +38,6 @@ while not es.stop():
     i += 1
 
 res_obj = es.result
-
-print(res_obj.xbest, res_obj.fbest)
-print(i)
-input('enter')
 
 dict_out = OrderedDict([('Xepisodes', res_obj.xbest),('Yepisodes', res_obj.fbest)])
 filename = ig.data_samples_dir + 'cma_seed_' + str(args.seed)  +'.p'

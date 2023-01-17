@@ -23,9 +23,9 @@ from .utils import from_unit_cube, latin_hypercube, to_unit_cube
 
 import os
 sys.path.insert(0, os.path.join(sys.path[0], '..'))
-from tfbo.utils.load_save import save_dictionary, load_dictionary
+from utils.load_save import save_dictionary, load_dictionary
 from collections import OrderedDict
-from tfbo.utils.name_file import name_turbo
+from utils.name_file import name_turbo
 from examples.config_file import config
 
 

@@ -3,8 +3,8 @@ import sys, os
 sys.path.insert(0, os.path.join(sys.path[0], '..'))
 
 import numpy as np
-from tfbo.utils.load_save import save_dictionary
-from tfbo.utils.import_modules import import_attr
+from utils.load_save import save_dictionary
+from utils.import_modules import import_attr
 from examples.config_file import config
 from collections import OrderedDict
 import random

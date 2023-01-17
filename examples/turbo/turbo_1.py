@@ -18,8 +18,8 @@ import numpy as np
 import torch
 from torch.quasirandom import SobolEngine
 from examples.config_file import config
-from tfbo.utils.name_file import name_turbo
-from tfbo.utils.load_save import save_dictionary, load_dictionary
+from utils.name_file import name_turbo
+from utils.load_save import save_dictionary, load_dictionary
 from collections import OrderedDict
 
 

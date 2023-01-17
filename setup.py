@@ -238,15 +238,15 @@ print(find_packages('.'))
 
 
 setup(
-    name='motion_imitation',
-    version='0.0.6',
+    name='high_mpc',
+    version='0.0.1',
     description=
-    'Motion Imitation and MPC with python bindings for MPC using the osqp solver',
+    'High Dimensional MPC Tuning',
     long_description=
-    'Motion Imitation and MPC with python bindings for MPC using the PyBullet and the QPOASES and OSQP solver',
-    url='https://github.com/google-research/motion_imitation',
-    author='Erwin Coumans',
-    author_email='erwincoumans@google.com',
+    'Tuning MPC parameters using TuRBO',
+    url='https://github.com/asarmadi/high_bo',
+    author='Alireza Sarmadi',
+    author_email='a.sarmadi@yahoo.com',
     license='mixed',
     platforms='any',
     keywords=[

@@ -8,11 +8,11 @@ from collections import OrderedDict
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from tfbo.utils.import_modules import import_attr
-from tfbo.models.vae_models import *
-from tfbo.utils.load_save import save_dictionary, load_dictionary
+from utils.import_modules import import_attr
+from models.vae_models import *
+from utils.load_save import save_dictionary, load_dictionary
 from examples.config_file import config
-from tfbo.utils.name_file import name_turbo
+from utils.name_file import name_turbo
 
 ig = config()
 parser = argparse.ArgumentParser(description='Testing Weights')

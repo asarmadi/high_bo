@@ -4,9 +4,9 @@ import sys, os
 sys.path.insert(0, os.path.join(sys.path[0], '..'))
 import time
 import torch
-from tfbo.utils.import_modules import import_attr
-from tfbo.utils.name_file import name_synthetic, name_turbo
-from tfbo.utils.load_save import load_dictionary
+from utils.import_modules import import_attr
+from utils.name_file import name_synthetic, name_turbo
+from utils.load_save import load_dictionary
 from examples.config_file import config
 
 parser = argparse.ArgumentParser(description='Testing Weights')
