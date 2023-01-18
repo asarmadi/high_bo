@@ -78,7 +78,6 @@ import distutils.ccompiler
 
 distutils.ccompiler.CCompiler.compile = parallelCCompile
 
-# see http://stackoverflow.com/a/8719066/295157
 import os
 
 platform = get_platform()
@@ -86,13 +85,10 @@ print(platform)
 
 CXX_FLAGS = '-D__SUPPRESSANYOUTPUT__'
 
-
-# libraries += [current_python]
-
 libraries = []
 include_dirs = [
   '.',
-  'third_party/unitree_legged_sdk/pybind11/include', 
+  'third_party/pybind11/include',
   'third_party/eigen3/include',
   'third_party/osqp/include',
   'third_party',
@@ -102,7 +98,6 @@ include_dirs = [
   'third_party/qpoases/include',
   ]
 
-	
 try:
     import numpy
 
@@ -117,7 +112,7 @@ else:
     include_dirs += NP_DIRS
 
 sources = [
-  "mpc_controller/mpc_osqp.cc",
+        "mpc_controller/mpc_osqp.cc",
 	"third_party/osqp/src/auxil.c",
 	"third_party/osqp/src/cs.c",
 	"third_party/osqp/src/ctrlc.c",

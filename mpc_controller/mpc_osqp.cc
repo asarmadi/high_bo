@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -919,12 +920,9 @@ PYBIND11_MODULE(mpc_osqp, m) {
   m.doc() = R"pbdoc(
         MPC using OSQP Python Bindings
         -----------------------
-
         .. currentmodule:: mpc_osqp
-
         .. autosummary::
            :toctree: _generate
-
     )pbdoc";
 
       
@@ -952,3 +950,4 @@ PYBIND11_MODULE(mpc_osqp, m) {
 
   
 }
+

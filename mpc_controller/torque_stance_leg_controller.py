@@ -21,18 +21,20 @@ try:
   from mpc_controller import gait_generator as gait_generator_lib
   from mpc_controller import leg_controller
 except:  #pylint: disable=W0702
-  print("You need to install motion_imitation")
+  print("mpc_controller")
+  print("You need to install high_mpc")
   print("Either run python3 setup.py install --user in this repo")
-  print("or use pip3 install motion_imitation --user")
-  sys.exit()
+  print("or use pip3 install high_mpc --user")
+  os.sys.exit()
 
 try:
   import mpc_osqp as convex_mpc  # pytype: disable=import-error
 except:  #pylint: disable=W0702
-  print("You need to install motion_imitation")
+  print("mpc_osqp")
+  print("You need to install high_mpc")
   print("Either run python3 setup.py install --user in this repo")
-  print("or use pip3 install motion_imitation --user")
-  sys.exit()
+  print("or use pip3 install high_mpc --user")
+  os.sys.exit()
 
 _FORCE_DIMENSION = 3
 # The QP weights in the convex MPC formulation. See the MIT paper for details:
