@@ -28,13 +28,13 @@ import re
 import numpy as np
 import time
 
-from motion_imitation.robots import laikago_pose_utils
-from motion_imitation.robots import b1
-from motion_imitation.robots import velocity_estimator
-from motion_imitation.robots import minitaur
-from motion_imitation.robots import robot_config
-from motion_imitation.envs import locomotion_gym_config
-from robot_interface import RobotInterface  # pytype: disable=import-error
+from robots import laikago_pose_utils
+from robots import b1
+from robots import velocity_estimator
+from robots import minitaur
+from robots import robot_config
+from envs import locomotion_gym_config
+from .rb_interface import RobotInterface  # pytype: disable=import-error
 
 NUM_MOTORS = 12
 NUM_LEGS = 4

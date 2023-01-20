@@ -104,8 +104,10 @@ class unitree_cost():
 
 
     def gen_speed(self, t):
-        time_points = (0, 5, 10, 15, 20, 25, 30)
-        speed_points = (self.v_des,)* len(time_points)
+        time_points  = (0, 5, 10, 15, 20, 25, 30)
+        speed_points = ((0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.5,0.0,0.0), (0.0,0.5,0.0,0.0),
+                        (-0.5,0.0,0.0,0.0), (-0.5,0.0,0.0,0.0), (0.0,-0.5,0.0,0.0) )
+#        speed_points = (self.v_des,)* len(time_points)
         speed = scipy.interpolate.interp1d(time_points,
                                            speed_points,
                                            kind="previous",
@@ -215,11 +217,10 @@ class unitree_cost():
            terrain_id  = pybullet.createMultiBody(baseMass = 0, baseCollisionShapeIndex = height_field_terrain_shape)
            pybullet.changeVisualShape(terrain_id, -1, rgbaColor=[.101, .67, .33, 1.0])
 
-
         # Construct robot class:
         if self.ig.use_real_robot:
           if self.ig.obj == 'a1':
-             from motion_imitation.robots import a1_robot
+             from robots import a1_robot
              self.robot = a1_robot.A1Robot(
                  pybullet_client=p,
                  motor_control_mode=robot_config.MotorControlMode.HYBRID,
@@ -227,7 +228,7 @@ class unitree_cost():
                  time_step=0.002,
                  action_repeat=1)
           elif self.ig.obj == 'b1':
-             from motion_imitation.robots import b1_robot
+             from robots import b1_robot
              self.robot = b1_robot.B1Robot(
                  pybullet_client=p,
                  motor_control_mode=robot_config.MotorControlMode.HYBRID,
@@ -294,6 +295,7 @@ class unitree_cost():
              break
           self._update_controller_params(lin_speed, ang_speed)
           self.controller.update()
+
           hybrid_action, _ = self.controller.get_action()
           pcom = np.array(self.robot.GetBasePosition()).copy()
           x_height = pcom[0]

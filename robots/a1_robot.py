@@ -28,13 +28,13 @@ import re
 import numpy as np
 import time
 
-from motion_imitation.robots import laikago_pose_utils
-from motion_imitation.robots import a1
-from motion_imitation.robots import velocity_estimator
-from motion_imitation.robots import minitaur
-from motion_imitation.robots import robot_config
-from motion_imitation.envs import locomotion_gym_config
-from robot_interface import RobotInterface  # pytype: disable=import-error
+from robots import laikago_pose_utils
+from robots import a1
+from robots import velocity_estimator
+from robots import minitaur
+from robots import robot_config
+from envs   import locomotion_gym_config
+from .rb_interface import RobotInterface  # pytype: disable=import-error
 
 NUM_MOTORS = 12
 NUM_LEGS = 4
@@ -73,10 +73,10 @@ _DEFAULT_HIP_POSITIONS = (
 
 ABDUCTION_P_GAIN = 100.0
 ABDUCTION_D_GAIN = 1.0
-HIP_P_GAIN = 100.0
-HIP_D_GAIN = 2.0
-KNEE_P_GAIN = 100.0
-KNEE_D_GAIN = 2.0
+HIP_P_GAIN       = 100.0
+HIP_D_GAIN       = 2.0
+KNEE_P_GAIN      = 100.0
+KNEE_D_GAIN      = 2.0
 
 COMMAND_CHANNEL_NAME = 'LCM_Low_Cmd'
 STATE_CHANNEL_NAME = 'LCM_Low_State'
@@ -162,8 +162,7 @@ class A1Robot(a1.A1):
     self._motor_velocities = np.zeros(12)
     self._joint_states = None
     self._last_reset_time = time.time()
-    self._velocity_estimator = velocity_estimator.VelocityEstimator(
-        self)
+    self._velocity_estimator = velocity_estimator.VelocityEstimator(self)
 
     # Initiate UDP for robot state and actions
     self._robot_interface = RobotInterface()

@@ -55,8 +55,7 @@ HIP_JOINT_OFFSET = 0.0
 UPPER_LEG_JOINT_OFFSET = 0.0
 KNEE_JOINT_OFFSET = 0.0
 DOFS_PER_LEG = 3
-JOINT_OFFSETS = np.array(
-    [HIP_JOINT_OFFSET, UPPER_LEG_JOINT_OFFSET, KNEE_JOINT_OFFSET] * 4)
+JOINT_OFFSETS = np.array([HIP_JOINT_OFFSET, UPPER_LEG_JOINT_OFFSET, KNEE_JOINT_OFFSET] * 4)
 PI = math.pi
 
 MAX_MOTOR_ANGLE_CHANGE_PER_STEP = 0.2
@@ -80,13 +79,13 @@ KNEE_P_GAIN = 100.0
 KNEE_D_GAIN = 2.0
 
 # Bases on the readings from Laikago's default pose.
-INIT_MOTOR_ANGLES = np.array([0, 0.9, -1.8] * NUM_LEGS)
+INIT_MOTOR_ANGLES  = np.array([0, 0.9, -1.8] * NUM_LEGS)
 
-HIP_NAME_PATTERN = re.compile(r"\w+_hip_\w+")
+HIP_NAME_PATTERN   = re.compile(r"\w+_hip_\w+")
 UPPER_NAME_PATTERN = re.compile(r"\w+_upper_\w+")
 LOWER_NAME_PATTERN = re.compile(r"\w+_lower_\w+")
-TOE_NAME_PATTERN = re.compile(r"\w+_toe\d*")
-IMU_NAME_PATTERN = re.compile(r"imu\d*")
+TOE_NAME_PATTERN   = re.compile(r"\w+_toe\d*")
+IMU_NAME_PATTERN   = re.compile(r"imu\d*")
 
 URDF_FILENAME = "a1/a1.urdf"
 
