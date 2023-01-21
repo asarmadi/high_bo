@@ -104,9 +104,11 @@ class unitree_cost():
 
 
     def gen_speed(self, t):
-        time_points  = (0, 5, 10, 15, 20, 25, 30)
-        speed_points = ((0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.5,0.0,0.0), (0.0,0.5,0.0,0.0),
-                        (-0.5,0.0,0.0,0.0), (-0.5,0.0,0.0,0.0), (0.0,-0.5,0.0,0.0) )
+        time_points  = (0, 5, 7, 8, 10, 15, 16, 17, 20, 25, 26, 27, 30, 35, 36, 37)
+        speed_points = ((0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.0,0.0,1.0), (0.0,0.0,0.0,1.0), 
+                        (0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.0,0.0,1.0), (0.0,0.0,0.0,1.0),
+                        (0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.0,0.0,1.0), (0.0,0.0,0.0,1.0),
+                        (0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.0,0.0,1.0), (0.0,0.0,0.0,1.0),)
 #        speed_points = (self.v_des,)* len(time_points)
         speed = scipy.interpolate.interp1d(time_points,
                                            speed_points,
@@ -268,8 +270,7 @@ class unitree_cost():
            weights = decoder(Z).cpu().detach().numpy()
         else:
            weights = x
-#        print(weights)
-#        input('enter')
+
         self._setup_controller(weights)
         self.controller.reset()
 

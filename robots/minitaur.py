@@ -29,8 +29,6 @@ import copy
 import math
 import re
 import numpy as np
-from robots import minitaur_constants
-from robots import minitaur_motor
 from robots import robot_config
 from robots import action_filter
 from robots import kinematics
@@ -93,7 +91,7 @@ class Minitaur(object):
                action_repeat=1,
                self_collision_enabled=False,
                motor_control_mode=robot_config.MotorControlMode.POSITION,
-               motor_model_class=minitaur_motor.MotorModel,
+               motor_model_class=None,
                motor_kp=1.0,
                motor_kd=0.02,
                motor_torque_limits=None,
@@ -1427,8 +1425,3 @@ class Minitaur(object):
   @property
   def joint_states(self):
     return self._joint_states
-
-  @classmethod
-  def GetConstants(cls):
-    del cls
-    return minitaur_constants

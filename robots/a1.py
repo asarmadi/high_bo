@@ -251,7 +251,6 @@ class A1(minitaur.Minitaur):
         HIP_D_GAIN, KNEE_D_GAIN, ABDUCTION_D_GAIN, HIP_D_GAIN, KNEE_D_GAIN,
         ABDUCTION_D_GAIN, HIP_D_GAIN, KNEE_D_GAIN
     ]
-
     super(A1, self).__init__(
         pybullet_client=pybullet_client,
         time_step=time_step,

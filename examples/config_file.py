@@ -35,8 +35,8 @@ class config():
         self.lr                 = 0.001                                               # Learning rate of EA training
 
         self.logdir             = ""                                                  # Where to log the trajectories
-        self.use_real_robot     = True                                               # Whether to use real robot or simulator
-        self.show_gui           = False                                                # Whether to show GUI
+        self.use_real_robot     = False                                               # Whether to use real robot or simulator
+        self.show_gui           = True                                                # Whether to show GUI
         self.max_time_secs      = 25                                                   # Maximum time to run the robot
         self.video_dir          = "/data/alireza/high_bo/BayesOpt/video/out"          # Where to save the video
         self.use_gamepad        = False                                               # This flag is used for real robot
