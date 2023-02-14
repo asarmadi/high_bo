@@ -78,8 +78,8 @@ HIP_D_GAIN = 2.0
 KNEE_P_GAIN = 100.0
 KNEE_D_GAIN = 2.0
 
-# Bases on the readings from Laikago's default pose.
 INIT_MOTOR_ANGLES  = np.array([0, 0.9, -1.8] * NUM_LEGS)
+
 
 HIP_NAME_PATTERN   = re.compile(r"\w+_hip_\w+")
 UPPER_NAME_PATTERN = re.compile(r"\w+_upper_\w+")
@@ -180,7 +180,7 @@ class A1(minitaur.Minitaur):
   # when the replan frequency is low (e.g. using a less beefy CPU).
   MPC_BODY_MASS = 108 / 9.8
   MPC_BODY_INERTIA = np.array((0.017, 0, 0, 0, 0.057, 0, 0, 0, 0.064)) * 4.
-  MPC_BODY_HEIGHT = 0.24
+  MPC_BODY_HEIGHT = 0.34
   MPC_VELOCITY_MULTIPLIER = 0.5
   ACTION_CONFIG = [
       locomotion_gym_config.ScalarField(name="FR_hip_motor",
@@ -240,6 +240,7 @@ class A1(minitaur.Minitaur):
     self._urdf_filename = urdf_filename
     self._allow_knee_contact = allow_knee_contact
     self._enable_clip_motor_commands = enable_clip_motor_commands
+    self._init_motor_angles = INIT_MOTOR_ANGLES[:3]
 
     motor_kp = [
         ABDUCTION_P_GAIN, HIP_P_GAIN, KNEE_P_GAIN, ABDUCTION_P_GAIN,

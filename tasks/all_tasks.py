@@ -14,7 +14,9 @@ from mpc_controller import locomotion_controller
 from mpc_controller import openloop_gait_generator
 from mpc_controller import raibert_swing_leg_controller
 #from mpc_controller import torque_stance_leg_controller_quadprog as torque_stance_leg_controller
-from mpc_controller import torque_stance_leg_controller
+#from mpc_controller import torque_stance_leg_controller
+#from mpc_controller import stance_controller as torque_stance_leg_controller
+
 from mpc_controller.gait_params_class import gait_params_class
 import mpc_osqp
 from perlin_noise import PerlinNoise
@@ -44,9 +46,10 @@ class unitree_cost():
             self.bounds = np.append(self.bounds, [[0,1]], axis=0)
 
         self.seed = seed
-        self._STANCE_DURATION_SECONDS = [0.13] * 4
+        self._STANCE_DURATION_SECONDS = [0.23] * 4
         if self.ig.motion == 'trot':
-           self.v_des = (1.6,0.0,0.0,0.0)
+           self.v_des = (0.8,0.0,0.0,0.0)
+           self.w_des = (0.0,0.0,0.0,0.0)
            self._DUTY_FACTOR = [0.6] * 4
            self._INIT_PHASE_FULL_CYCLE = [0.9, 0, 0, 0.9]
 
@@ -58,6 +61,7 @@ class unitree_cost():
            )
         elif self.ig.motion == 'tripod':
            self.v_des = (1.6,0.0,0.0,0.0)
+           self.w_des = (0.0,0.0,0.0,0.1)
            self._DUTY_FACTOR = [.8] * 4
            self._INIT_PHASE_FULL_CYCLE = [0., 0.25, 0.5, 0.]
            self._INIT_LEG_STATE = (
@@ -68,9 +72,10 @@ class unitree_cost():
                )
         elif self.ig.motion == 'stand':
            self.v_des = (0.0,0.0,0.0,0.0)
+           self.w_des = (0.0,0.0,0.0,0.0)
            self._DUTY_FACTOR = [1.0] * 4
-           self._STANCE_DURATION_SECONDS = [self.ig.max_time_secs] * 4
-           self._INIT_PHASE_FULL_CYCLE = [0., 0., 1., 1.]
+           self._STANCE_DURATION_SECONDS = [1.] * 4
+           self._INIT_PHASE_FULL_CYCLE = [0., 0., 0., 0.]
            self._INIT_LEG_STATE = (
                gait_generator_lib.LegState.STANCE,
                gait_generator_lib.LegState.STANCE,
@@ -81,6 +86,7 @@ class unitree_cost():
         elif self.ig.motion == 'jump':
            if self.ig.obj == 'a1':
               self.v_des = (0.5,0.0,0.0,0.0)
+              self.w_des = (0.0,0.0,0.0,0.1)
               self._STANCE_DURATION_SECONDS = [0.3] * 4
               self._DUTY_FACTOR = [0.7] * 4
               self._INIT_PHASE_FULL_CYCLE = [0.5, 0.5, 0.5, 0.5]
@@ -92,6 +98,7 @@ class unitree_cost():
               )
            elif self.ig.obj == 'b1':
               self.v_des = (0.1,0.0,0.0,0.0)
+              self.w_des = (0.0,0.0,0.0,0.1)
               self._STANCE_DURATION_SECONDS = [0.3] * 4
               self._DUTY_FACTOR = [0.7] * 4
               self._INIT_PHASE_FULL_CYCLE = [0.5, 0.5, 0.5, 0.5]
@@ -105,10 +112,10 @@ class unitree_cost():
 
     def gen_speed(self, t):
         time_points  = (0, 5, 7, 8, 10, 15, 16, 17, 20, 25, 26, 27, 30, 35, 36, 37)
-        speed_points = ((0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.0,0.0,1.0), (0.0,0.0,0.0,1.0), 
-                        (0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.0,0.0,1.0), (0.0,0.0,0.0,1.0),
-                        (0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.0,0.0,1.0), (0.0,0.0,0.0,1.0),
-                        (0.5,0.0,0.0,0.0), (0.5,0.0,0.0,0.0), (0.0,0.0,0.0,1.0), (0.0,0.0,0.0,1.0),)
+        speed_points = (self.v_des, self.v_des, self.w_des, self.w_des,
+                        self.v_des, self.v_des, self.w_des, self.w_des,
+                        self.v_des, self.v_des, self.w_des, self.w_des,
+                        self.v_des, self.v_des, self.w_des, self.w_des,)
 #        speed_points = (self.v_des,)* len(time_points)
         speed = scipy.interpolate.interp1d(time_points,
                                            speed_points,
@@ -138,23 +145,27 @@ class unitree_cost():
             desired_height=self.robot.MPC_BODY_HEIGHT,
             foot_clearance=0.01)
 
+        if self.ig.motion != 'stand':
+           from mpc_controller import torque_stance_leg_controller
+           #from mpc_controller import torque_stance_leg_controller_quadprog as torque_stance_leg_controller
+
         st_controller = torque_stance_leg_controller.TorqueStanceLegController(
             self.robot,
             gait_generator,
             state_estimator,
             desired_speed=desired_speed,
-            desired_twisting_speed=desired_twisting_speed,
-            desired_body_height=self.robot.MPC_BODY_HEIGHT,
-            mpc_weights=mpc_weights,
-            qp_solver = mpc_osqp.QPOASES #or mpc_osqp.OSQP
+            desired_twisting_speed = desired_twisting_speed,
+            desired_body_height    = self.robot.MPC_BODY_HEIGHT,
+            mpc_weights            = mpc_weights,
+            qp_solver              = mpc_osqp.QPOASES #or mpc_osqp.OSQP
             )
 
         self.controller = locomotion_controller.LocomotionController(
-            robot=self.robot,
-            gait_generator=gait_generator,
-            state_estimator=state_estimator,
-            swing_leg_controller=sw_controller,
-            stance_leg_controller=st_controller,
+            robot                 = self.robot,
+            gait_generator        = gait_generator,
+            state_estimator       = state_estimator,
+            swing_leg_controller  = sw_controller,
+            stance_leg_controller = st_controller,
             clock=self.robot.GetTimeSinceReset)
 
     def _update_controller_params(self, lin_speed, ang_speed):
@@ -271,8 +282,12 @@ class unitree_cost():
         else:
            weights = x
 
-        self._setup_controller(weights)
-        self.controller.reset()
+        if self.ig.motion != 'stand':
+           self._setup_controller(weights)
+           self.controller.reset()
+        else:
+           from mpc_controller.stance_controller import StanceController
+           st_controller = StanceController(self.robot)
 
         start_time = self.robot.GetTimeSinceReset()
         current_time = start_time
@@ -286,18 +301,23 @@ class unitree_cost():
   #      z_com = []
 #        p.setRealTimeSimulation(1)
         while current_time - start_time < self.ig.max_time_secs:
-#          time.sleep(0.02) #on some fast computer, works better with sleep on real A1?
+          time.sleep(0.02) #on some fast computer, works better with sleep on real A1?
           start_time_robot = current_time
           start_time_wall = time.time()
           # Updates the controller behavior parameters.
           lin_speed, ang_speed, e_stop = command_function(current_time)
+          lin_speed = np.array([0.6,0.,0])
+          ang_speed = 0
           if e_stop:
              print("E-stop kicked, exiting...")
              break
-          self._update_controller_params(lin_speed, ang_speed)
-          self.controller.update()
+#          self._update_controller_params(lin_speed, ang_speed)
+ #         self.controller.update()
 
-          hybrid_action, _ = self.controller.get_action()
+          if self.ig.motion != 'stand':
+             hybrid_action, _ = self.controller.get_action()
+          else:
+             hybrid_action = st_controller.get_action()
           pcom = np.array(self.robot.GetBasePosition()).copy()
           x_height = pcom[0]
           z_com    = pcom[2]
@@ -318,7 +338,9 @@ class unitree_cost():
             if actual_duration < expected_duration:
               time.sleep(expected_duration - actual_duration)
           err += (np.sum((vcom-self.v_des[0:3])**2)).reshape(-1,1)
+
           FALL = False
+          '''
           if (self.ig.motion == 'trot')  and (z_com < 0.17 or np.isnan(z_com) or z_com > 0.42):
              FALL = True
              break
@@ -328,13 +350,14 @@ class unitree_cost():
           if (self.ig.motion == 'stand') and (z_com < 0.17 or np.isnan(z_com) or z_com > 0.36):
              FALL = True
              break
+          '''
         if self.ig.use_gamepad:
            gamepad.stop()
         o = current_time-start_time
         p.removeAllUserDebugItems()
         p.resetSimulation()
         p.disconnect()
-#        print(np.isnan(err), FALL, np.sqrt(err), current_time-start_time)
+        print(np.isnan(err), FALL, np.sqrt(err), current_time-start_time)
  #       print(np.sqrt(err))
         if np.isnan(x_height):
            x_height = 0

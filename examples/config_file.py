@@ -16,8 +16,8 @@ class config():
         self.low_dim            = 10            					# The projection space dimension
         self.high_dim           = 25            					# The original parameters space dimension
         self.method             = "pre"         					# The sammple-efficient learning method (e.g., turbo, hesbo, pure, and pre)
-        self.motion             = "trot"        					# The desired motion of the robot (e.g., trot, bound, and jump)
-        self.obj                = "a1"   						# The BO cost function of a robot (e.g., a1, b1)
+        self.motion             = "stand"        					# The desired motion of the robot (e.g., trot, bound, and jump)
+        self.obj                = "b1"   						# The BO cost function of a robot (e.g., a1, b1)
         self.opt                = "add_bo"     						# Optimization method for the BayesOpt paper
         self.loss               = "Neg_ei"      					# Loss function for the BayesOpt paper
         self.ea_type            = "no"          					# Autoencoder type (e.g., ea, vae, cvae, no)
@@ -37,6 +37,6 @@ class config():
         self.logdir             = ""                                                  # Where to log the trajectories
         self.use_real_robot     = False                                               # Whether to use real robot or simulator
         self.show_gui           = True                                                # Whether to show GUI
-        self.max_time_secs      = 25                                                   # Maximum time to run the robot
+        self.max_time_secs      = 5                                                   # Maximum time to run the robot
         self.video_dir          = "/data/alireza/high_bo/BayesOpt/video/out"          # Where to save the video
         self.use_gamepad        = False                                               # This flag is used for real robot

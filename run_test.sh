@@ -1,12 +1,13 @@
 LD_LIBRARY_PATH=/data/alireza/high_bo/BayesOpt/lib/
+export LD_LIBRARY_PATH
 export PYTHONPATH="./lib/:$PYTHONPATH"
 
-SEED=12500
+SEED=12511
 
 #python examples/plots.py --seed=${SEED}
 
 xvfb-run -a python examples/find_statistics.py --seed=${SEED}
-
+#python examples/find_statistics.py --seed=${SEED}
 
 #for N_S in 1 2 3 4 5 6 7 8; do
 #python examples/turbo_ex.py --seed=${SEED}

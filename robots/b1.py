@@ -48,8 +48,8 @@ MOTOR_NAMES = [
     "RL_thigh_joint",
     "RL_calf_joint",
 ]
-INIT_RACK_POSITION = [0, 0, 1]
-INIT_POSITION = [0, 0, 0.45]
+INIT_RACK_POSITION = [0, 0, 2]
+INIT_POSITION = [0, 0, 0.68]
 JOINT_DIRECTIONS = np.ones(12)
 HIP_JOINT_OFFSET = 0.0
 UPPER_LEG_JOINT_OFFSET = 0.0
@@ -77,19 +77,22 @@ HIP_OFFSETS = np.array([[0.183, -0.047, 0.], [0.183, 0.047, 0.],
 #                        [0.0, 0.0, 0.], [0.0, 0.0, 0.]
 #                        ]) + COM_OFFSET
 
-ABDUCTION_P_GAIN = 500.0
-ABDUCTION_D_GAIN = 1.
+ABDUCTION_P_GAIN = 1000.0
+ABDUCTION_D_GAIN = 10.
 
-HIP_P_GAIN = 100.0
-HIP_D_GAIN = 2.0
+HIP_P_GAIN = 1000.0
+HIP_D_GAIN = 10.0
 
-KNEE_P_GAIN = 100.0
-KNEE_D_GAIN = 2.0
+KNEE_P_GAIN = 1000.0
+KNEE_D_GAIN = 10.0
 
 # Bases on the readings from Laikago's default pose.
-INIT_MOTOR_ANGLES = np.array([0, 0.9, -1.8] * NUM_LEGS)
+#INIT_MOTOR_ANGLES = np.array([0, 0.9, -1.0] * NUM_LEGS)
 #INIT_MOTOR_ANGLES = np.array([0., 0.5, -0.5] * NUM_LEGS) # ABDUCTION, HIP, KNEE     Front, Back
-#INIT_MOTOR_ANGLES = np.array([0, 1.0, -2.0, 0, 1.0, -2.0, 0, 0.8, -2.0, 0, 0.8, -2.0])
+
+INIT_MOTOR_ANGLES = np.array([0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8])
+
+#INIT_MOTOR_ANGLES = np.array([0, 0.5, -1.0, 0, 0.5, -1.0, 0, 0.5, -1.0, 0, 0.5, -1.0])
 
 HIP_NAME_PATTERN = re.compile(r"\w+_hip_\w+")
 UPPER_NAME_PATTERN = re.compile(r"\w+_thigh_\w+")
@@ -97,15 +100,15 @@ LOWER_NAME_PATTERN = re.compile(r"\w+_calf_\w+")
 TOE_NAME_PATTERN = re.compile(r"\w+_foot")
 IMU_NAME_PATTERN = re.compile(r"imu\d*")
 
-URDF_FILENAME = "./b1.urdf"
+URDF_FILENAME = "./robots/b1.urdf"
 
 _BODY_B_FIELD_NUMBER = 2
 _LINK_A_FIELD_NUMBER = 3
 
 
 def foot_position_in_hip_frame_to_joint_angle(foot_position, l_hip_sign=1):
-  l_up = 0.2
-  l_low = 0.2
+  l_up = 0.35
+  l_low = 0.35
   l_hip = 0.08505 * l_hip_sign
   x, y, z = foot_position[0], foot_position[1], foot_position[2]
   theta_knee = -np.arccos(
@@ -121,8 +124,8 @@ def foot_position_in_hip_frame_to_joint_angle(foot_position, l_hip_sign=1):
 
 def foot_position_in_hip_frame(angles, l_hip_sign=1):
   theta_ab, theta_hip, theta_knee = angles[0], angles[1], angles[2]
-  l_up = 0.2
-  l_low = 0.2
+  l_up = 0.35
+  l_low = 0.35
   l_hip = 0.08505 * l_hip_sign
   leg_distance = np.sqrt(l_up**2 + l_low**2 +
                          2 * l_up * l_low * np.cos(theta_knee))
@@ -145,8 +148,8 @@ def analytical_leg_jacobian(leg_angles, leg_id):
   ` leg_angles: a list of 3 numbers for current abduction, hip and knee angle.
     l_hip_sign: whether it's a left (1) or right(-1) leg.
   """
-  l_up = 0.2
-  l_low = 0.2
+  l_up = 0.35
+  l_low = 0.35
   l_hip = 0.08505 * (-1)**(leg_id + 1)
 
   t1, t2, t3 = leg_angles[0], leg_angles[1], leg_angles[2]
@@ -196,7 +199,7 @@ class B1(minitaur.Minitaur):
   I_y = (1/12)*MPC_BODY_MASS*(l_z**2+l_x**2)
   I_z = (1/12)*MPC_BODY_MASS*(l_x**2+l_y**2)
   MPC_BODY_INERTIA = np.array((I_x, 0, 0, 0, I_y, 0, 0, 0, I_z))
-  MPC_BODY_HEIGHT = 0.34
+  MPC_BODY_HEIGHT = 0.45
   MPC_VELOCITY_MULTIPLIER = 0.5
   ACTION_CONFIG = [
       locomotion_gym_config.ScalarField(name="FR_hip_motor",
@@ -256,6 +259,7 @@ class B1(minitaur.Minitaur):
     self._urdf_filename = urdf_filename
     self._allow_knee_contact = allow_knee_contact
     self._enable_clip_motor_commands = enable_clip_motor_commands
+    self._init_motor_angles = INIT_MOTOR_ANGLES[:3]
 
     motor_kp = [
         ABDUCTION_P_GAIN, HIP_P_GAIN, KNEE_P_GAIN, ABDUCTION_P_GAIN,
@@ -526,9 +530,9 @@ class B1(minitaur.Minitaur):
     motor_angles = self.GetMotorAngles()
     return foot_positions_in_base_frame(motor_angles)
 
-  def ComputeJacobian(self, leg_id):
-    """Compute the Jacobian for a given leg."""
-    # Does not work for Minitaur which has the four bar mechanism for now.
-    motor_angles = self.GetMotorAngles()[leg_id * 3:(leg_id + 1) * 3]
-    return analytical_leg_jacobian(motor_angles, leg_id)
+#  def ComputeJacobian(self, leg_id):
+ #   """Compute the Jacobian for a given leg."""
+  #  # Does not work for Minitaur which has the four bar mechanism for now.
+   # motor_angles = self.GetMotorAngles()[leg_id * 3:(leg_id + 1) * 3]
+    #return analytical_leg_jacobian(motor_angles, leg_id)
 

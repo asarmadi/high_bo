@@ -36,7 +36,7 @@ class TorqueStanceLegController(leg_controller.LegController):
       state_estimator: Any,
       desired_speed: Tuple[float, float] = (0, 0),
       desired_twisting_speed: float = 0,
-      desired_body_height: float = 0.45,
+      desired_body_height: float = 0.35,
       num_legs: int = 4,
       friction_coeffs: Sequence[float] = (0.45, 0.45, 0.45, 0.45),
       mpc_weights=None,
@@ -101,8 +101,7 @@ class TorqueStanceLegController(leg_controller.LegController):
          for leg_state in self._gait_generator.desired_leg_state],
         dtype=np.int32)
 
-    robot_com_position = np.array(
-        (0., 0., self._estimate_robot_height(contacts)))
+    robot_com_position = np.array((0., 0., self._estimate_robot_height(contacts)))
     robot_com_velocity = self._state_estimator.com_velocity_body_frame
     robot_com_roll_pitch_yaw = np.array(self._robot.GetBaseRollPitchYaw())
     robot_com_roll_pitch_yaw[2] = 0  # To prevent yaw drifting
@@ -111,21 +110,16 @@ class TorqueStanceLegController(leg_controller.LegController):
     robot_dq = np.hstack((robot_com_velocity, robot_com_roll_pitch_yaw_rate))
 
     # Desired q and dq
-    desired_com_position = np.array((0., 0., self._desired_body_height),
-                                    dtype=np.float64)
-    desired_com_velocity = np.array(
-        (self.desired_speed[0], self.desired_speed[1], 0.), dtype=np.float64)
-    desired_com_roll_pitch_yaw = np.array((0., 0., 0.), dtype=np.float64)
-    desired_com_angular_velocity = np.array(
-        (0., 0., self.desired_twisting_speed), dtype=np.float64)
-    desired_q = np.hstack((desired_com_position, desired_com_roll_pitch_yaw))
-    desired_dq = np.hstack(
-        (desired_com_velocity, desired_com_angular_velocity))
+    desired_com_position         = np.array((0., 0., self._desired_body_height), dtype=np.float64)
+    desired_com_velocity         = np.array((self.desired_speed[0], self.desired_speed[1], 0.), dtype=np.float64)
+    desired_com_roll_pitch_yaw   = np.array((0., 0., 0.), dtype=np.float64)
+    desired_com_angular_velocity = np.array((0., 0., self.desired_twisting_speed), dtype=np.float64)
+    desired_q                    = np.hstack((desired_com_position, desired_com_roll_pitch_yaw))
+    desired_dq                   = np.hstack((desired_com_velocity, desired_com_angular_velocity))
     # Desired ddq
-    desired_ddq = KP * (desired_q - robot_q) + KD * (desired_dq - robot_dq)
-    desired_ddq = np.clip(desired_ddq, MIN_DDQ, MAX_DDQ)
-    contact_forces = qp_torque_optimizer.compute_contact_force(
-        self._robot, desired_ddq, contacts=contacts)
+    desired_ddq    = KP * (desired_q - robot_q) + KD * (desired_dq - robot_dq)
+    desired_ddq    = np.clip(desired_ddq, MIN_DDQ, MAX_DDQ)
+    contact_forces = qp_torque_optimizer.compute_contact_force(self._robot, desired_ddq, contacts=contacts)
 
     action = {}
     for leg_id, force in enumerate(contact_forces):

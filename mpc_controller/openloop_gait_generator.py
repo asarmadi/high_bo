@@ -68,8 +68,7 @@ class OpenloopGaitGenerator(gait_generator.GaitGenerator):
     self._robot = robot
     self._stance_duration = stance_duration
     self._duty_factor = duty_factor
-    self._swing_duration = np.array(stance_duration) / np.array(
-        duty_factor) - np.array(stance_duration)
+    self._swing_duration = np.array(stance_duration) / np.array(duty_factor) - np.array(stance_duration)
     if len(initial_leg_phase) != self._robot.num_legs:
       raise ValueError(
           "The number of leg phases should be the same as number of legs.")
@@ -88,7 +87,7 @@ class OpenloopGaitGenerator(gait_generator.GaitGenerator):
         self._next_leg_state.append(gait_generator.LegState.STANCE)
       else:
         self._initial_state_ratio_in_cycle.append(duty)
-        self._next_leg_state.append(gait_generator.LegState.SWING)
+        self._next_leg_state.append(gait_generator.LegState.SWING)   
 
     self._contact_detection_phase_threshold = contact_detection_phase_threshold
 
@@ -159,10 +158,8 @@ class OpenloopGaitGenerator(gait_generator.GaitGenerator):
                            self._duty_factor[leg_id])
       # To account for the non-zero initial phase, we offset the time duration
       # with the effect time contribution from the initial leg phase.
-      augmented_time = current_time + self._initial_leg_phase[
-          leg_id] * full_cycle_period
-      phase_in_full_cycle = math.fmod(augmented_time,
-                                      full_cycle_period) / full_cycle_period
+      augmented_time = current_time + self._initial_leg_phase[leg_id] * full_cycle_period
+      phase_in_full_cycle = math.fmod(augmented_time, full_cycle_period) / full_cycle_period
       ratio = self._initial_state_ratio_in_cycle[leg_id]
       if phase_in_full_cycle < ratio:
         self._desired_leg_state[leg_id] = self._initial_leg_state[leg_id]

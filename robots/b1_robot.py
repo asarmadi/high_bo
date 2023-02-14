@@ -109,7 +109,7 @@ class B1Robot(b1.B1):
   I_z = (1/12)*MPC_BODY_MASS*(l_x**2+l_y**2)
   MPC_BODY_INERTIA = np.array((I_x, 0, 0, 0, I_y, 0, 0, 0, I_z))
 
-  MPC_BODY_HEIGHT = 0.6
+  MPC_BODY_HEIGHT = 0.35
   ACTION_CONFIG = [
       locomotion_gym_config.ScalarField(name="FR_hip_motor",
                                         upper_bound=0.802851455917,
@@ -196,7 +196,7 @@ class B1Robot(b1.B1):
     self._joint_states = np.array(
         list(zip(self._motor_angles, self._motor_velocities)))
     if self._init_complete:
-      # self._SetRobotStateInSim(self._motor_angles, self._motor_velocities)
+      self._SetRobotStateInSim(self._motor_angles, self._motor_velocities)
       self._velocity_estimator.update(self._raw_state)
 
   def _SetRobotStateInSim(self, motor_angles, motor_velocities):
@@ -258,7 +258,6 @@ class B1Robot(b1.B1):
     """
     if motor_control_mode is None:
       motor_control_mode = self._motor_control_mode
-
     command = np.zeros(60, dtype=np.float32)
     if motor_control_mode == robot_config.MotorControlMode.POSITION:
       for motor_id in range(NUM_MOTORS):

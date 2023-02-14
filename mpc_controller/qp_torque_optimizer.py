@@ -19,9 +19,9 @@ def compute_mass_matrix(robot_mass, robot_inertia, foot_positions):
   #                   [-np.sin(yaw), np.cos(yaw), 0.], [0., 0., 1.]])
   rot_z = np.eye(3)
 
-  inv_mass = np.eye(3) / robot_mass
+  inv_mass    = np.eye(3) / robot_mass
   inv_inertia = np.linalg.inv(robot_inertia)
-  mass_mat = np.zeros((6, 12))
+  mass_mat    = np.zeros((6, 12))
 
   for leg_id in range(4):
     mass_mat[:3, leg_id * 3:leg_id * 3 + 3] = inv_mass
@@ -29,8 +29,7 @@ def compute_mass_matrix(robot_mass, robot_inertia, foot_positions):
     x = foot_positions[leg_id]
     foot_position_skew = np.array([[0, -x[2], x[1]], [x[2], 0, -x[0]],
                                    [-x[1], x[0], 0]])
-    mass_mat[3:6, leg_id * 3:leg_id * 3 +
-             3] = rot_z.T.dot(inv_inertia).dot(foot_position_skew)
+    mass_mat[3:6, leg_id * 3:leg_id * 3 + 3] = rot_z.T.dot(inv_inertia).dot(foot_position_skew)
   return mass_mat
 
 # @numba.jit(nopython=True, parallel=True, cache=True)
@@ -67,6 +66,7 @@ def compute_constraint_matrix(mpc_body_mass,
 # @numba.jit(nopython=True, cache=True)
 def compute_objective_matrix(mass_matrix, desired_acc, acc_weight, reg_weight):
   g = np.array([0., 0., 9.8, 0., 0., 0.])
+#  g = np.array([0., 0., 0., 0., 0., 0.])
   Q = np.diag(acc_weight)
   R = np.ones(12) * reg_weight
 
@@ -87,10 +87,8 @@ def compute_contact_force(robot,
       robot.MPC_BODY_MASS,
       np.array(robot.MPC_BODY_INERTIA).reshape((3, 3)),
       robot.GetFootPositionsInBaseFrame())
-  G, a = compute_objective_matrix(mass_matrix, desired_acc, acc_weight,
-                                  reg_weight)
-  C, b = compute_constraint_matrix(robot.MPC_BODY_MASS, contacts,
-                                   friction_coef, f_min_ratio, f_max_ratio)
+  G, a = compute_objective_matrix(mass_matrix, desired_acc, acc_weight, reg_weight)
+  C, b = compute_constraint_matrix(robot.MPC_BODY_MASS, contacts, friction_coef, f_min_ratio, f_max_ratio)
   G += 1e-4 * np.eye(12)
   result = quadprog.solve_qp(G, a, C, b)
   return -result[0].reshape((4, 3))
