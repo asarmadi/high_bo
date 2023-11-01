@@ -15,7 +15,6 @@ pip install -r requirements.txt
 ## Credits
 
 We thank authors of the following repos for their contributions to our codebase:
-* The Bicon implementation is derived from [Bicon](https://github.com/machines-in-motion/biconvex_mpc.git) with modifications.
 
 * The original convex MPC implementation is derived from [motion_imitation](https://github.com/google-research/motion_imitation) with modifications.
 
